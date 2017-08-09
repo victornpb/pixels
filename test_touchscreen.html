@@ -1,0 +1,350 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PixelFix</title>
+<!-- Favicon
+<link rel="icon" type="image/png" href="favicon.png" />
+-->
+
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<!--
+<link rel="apple-touch-startup-image" href="startup_320x460.png" />
+<link rel="apple-touch-icon" href="touch-icon-iphone.png" />
+<link rel="apple-touch-icon" sizes="72x72" href="touch-icon-ipad.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="touch-icon-iphone-retina.png" />
+<link rel="apple-touch-icon" sizes="144x144" href="touch-icon-ipad-retina.png" />
+<meta name="format-detection" content="telephone=no">
+-->
+
+<!-- External Style Sheet
+<link rel="stylesheet" href="style.css" type="text/css" charset="utf-8">
+-->
+
+<style type="text/css">
+/* CSS GOES HERE */
+window,body{
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	background-color: #111;
+}
+
+#container {
+    position: absolute;
+    margin: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+div > canvas{
+    position: absolute;
+    margin: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+</style>
+</head>
+<body>
+
+
+<div id="container">
+    <canvas id="imageView" width="400" height="300">
+        <p>Unfortunately, your browser is currently unsupported by our web application. We are sorry for the inconvenience. Please use one of the supported browsers listed below, or draw the image you want using an offline tool.</p>
+        <p>Supported browsers: <a href="http://www.opera.com">Opera</a>, <a href="http://www.mozilla.com">Firefox</a>, <a href="http://www.apple.com/safari">Safari</a>, and <a href="http://www.konqueror.org">Konqueror</a>.</p>
+    </canvas>
+</div>
+
+
+<script type="text/javascript">
+
+/* © 2009 ROBO Design
+ * http://www.robodesign.ro
+ */
+
+// Keep everything in anonymous function, called on window load.
+if (window.addEventListener) {
+    window.addEventListener('load', function () {
+        var canvas, context, tool;
+
+        function init() {
+            // Find the canvas element.
+            canvas = document.getElementById('imageView');
+            if (!canvas) {
+                alert('Error: I cannot find the canvas element!');
+                return;
+            }
+
+            if (!canvas.getContext) {
+                alert('Error: no canvas.getContext!');
+                return;
+            }
+
+            // Get the 2D canvas context.
+            context = canvas.getContext('2d');
+            if (!context) {
+                alert('Error: failed to getContext!');
+                return;
+            }
+            
+            canvas.width = parseInt(getComputedStyle(canvas.parentElement).getPropertyValue('width'));
+            canvas.height = parseInt(getComputedStyle(canvas.parentElement).getPropertyValue('height'));
+			
+			retinaCanvas(canvas);
+			
+            // Pencil tool instance.
+            tool = new tool_pencil();
+
+            // Attach the mousedown, mousemove and mouseup event listeners.
+            canvas.addEventListener('mousedown', ev_canvas, false);
+            canvas.addEventListener('mousemove', ev_canvas, false);
+            canvas.addEventListener('mouseup', ev_canvas, false);
+			
+			canvas.addEventListener('touchstart', ev_canvas, false);
+            canvas.addEventListener('touchmove', ev_canvas, false);
+            canvas.addEventListener('touchend', ev_canvas, false);
+        }
+
+        // This painting tool works like a drawing pencil which tracks the mouse 
+        // movements.
+        function tool_pencil() {
+            var tool = this;
+            this.started = false;
+			
+			var fingerIds = [];
+			var strokes = {};
+
+            // This is called when you start holding down the mouse button.
+            // This starts the pencil drawing.
+            this.mousedown = function (ev) {
+                
+                /* Drawing on Paint App */
+                context.lineWidth = 1;
+                //context.lineJoin = 'round';
+                //context.lineCap = 'round';
+                context.strokeStyle = noJQ_rainbow();
+                
+                
+                context.beginPath();
+                context.moveTo(ev._x, ev._y);
+                tool.started = true;
+            };
+			
+			
+			
+			this.touchstart = function(e){
+				e.preventDefault();
+				logtouch(e);
+				
+				for(var i=0; i<e.targetTouches.length; ++i){
+					var touch = e.targetTouches[i];
+					var id = touch.identifier;
+					
+					if(fingerIds.indexOf(id)==-1){ //new finger
+						fingerIds.push(id);
+						
+						strokes[id] = (function(){
+							var ctx = canvas.getContext('2d');
+							ctx.lineWidth = 1;
+							ctx.strokeStyle = noJQ_rainbow();
+							ctx.beginPath();
+							ctx.moveTo(touch.pageX+e.layerX, touch.pageY+e.layerY);
+							return ctx;
+						})();
+					}
+				}
+			}
+			
+			this.touchmove = function(e){
+				e.preventDefault();
+				logtouch(e);
+				
+				var currentFingers=[];
+				for(var i=0; i<e.targetTouches.length; ++i){
+					
+					var touch = e.targetTouches[i];
+					var id = touch.identifier;
+					
+					currentFingers.push(id);
+					
+					strokes[id].lineTo(touch.pageX+e.layerX, touch.pageY+e.layerY);
+                    strokes[id].stroke();
+				}
+				
+				
+				//
+				for(var i=0; i<currentFingers.length; ++i){
+					
+					var id = fingerIds[i];
+					if(currentFingers.indexOf(id)==-1){ //fingerId is not on the currentFingers
+						
+						//end path
+						
+						//delete strokes[id]; //delete context from obj
+						
+						fingerIds.splice(i,1); //remove id from array
+						
+						
+					}
+					else{
+						
+						//strokes[id].lineTo(ev._x, ev._y);
+                    	//strokes[id].stroke();	
+						
+					}
+				}
+			}
+			
+			this.touchend = function(e){
+				e.preventDefault();
+				logtouch(e);
+			}
+
+            // This function is called every time you move the mouse. Obviously, it only 
+            // draws if the tool.started state is set to true (when you are holding down 
+            // the mouse button).
+            this.mousemove = function (ev) {
+                if (tool.started) {
+                    context.lineTo(ev._x, ev._y);
+                    context.stroke();
+                }
+            };
+
+            // This is called when you release the mouse button.
+            this.mouseup = function (ev) {
+                if (tool.started) {
+                    tool.mousemove(ev);
+                    tool.started = false;
+                }
+            };
+        }
+
+        // The general-purpose event handler. This function just determines the mouse 
+        // position relative to the canvas element.
+        function ev_canvas(ev) {
+            if (ev.layerX || ev.layerX == 0) { // Firefox
+                ev._x = ev.layerX;
+                ev._y = ev.layerY;
+            } else if (ev.offsetX || ev.offsetX == 0) { // Opera
+                ev._x = ev.offsetX;
+                ev._y = ev.offsetY;
+            }
+
+            // Call the event handler of the tool.
+            var func = tool[ev.type];
+            if (func) {
+                func(ev);
+            }
+        }
+
+        init();
+
+    }, false);
+}
+
+var touchPosition = function(e) {
+	if (e.targetTouches){
+	    if (e.targetTouches || e.targetTouches.length == 1) {
+		    var touch = e.targetTouches[0];
+		   
+		   return {
+		   		x: touch.pageX,
+		    	y: touch.pageY
+			}
+		}
+	}
+};
+
+
+function randomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+
+function noJQ_rainbow() {
+    
+    var r, g, b;
+    var h = Math.random();
+    var i = ~~(h * 6);
+    var f = h * 6 - i;
+    var q = 1 - f;
+    switch(i % 6){
+        case 0: r = 1, g = f, b = 0; break;
+        case 1: r = q, g = 1, b = 0; break;
+        case 2: r = 0, g = 1, b = f; break;
+        case 3: r = 0, g = q, b = 1; break;
+        case 4: r = f, g = 0, b = 1; break;
+        case 5: r = 1, g = 0, b = q; break;
+    }
+    var c = "#" + ("00" + (~ ~(r * 255)).toString(16)).slice(-2) + ("00" + (~ ~(g * 255)).toString(16)).slice(-2) + ("00" + (~ ~(b * 255)).toString(16)).slice(-2);
+    
+  return (c);
+}
+
+
+
+
+
+
+
+function retinaCanvas(canvas){
+	if (window.devicePixelRatio) {
+		
+		var pixelRatio = window.devicePixelRatio;
+		var context = canvas.getContext('2d');
+		
+        var canvasWidth = canvas.getAttribute('width');
+        var canvasHeight = canvas.getAttribute('height');
+				
+        canvas.setAttribute('width', canvasWidth * pixelRatio);
+        canvas.setAttribute('height', canvasHeight * pixelRatio);
+		
+		canvas.style.width = canvasWidth+"px";
+        canvas.style.height = canvasHeight+"px";
+		
+        context.scale(pixelRatio, pixelRatio);
+		
+		setTimeout(function(){
+			canvas.setAttribute('width', canvasWidth * pixelRatio);
+        	canvas.setAttribute('height', canvasHeight * pixelRatio);
+		},10);              
+      }
+}
+
+
+
+function logtouch(e){
+	
+	var fingerIds = [];
+	
+	for(var i=0; i<e.targetTouches.length; ++i){
+		var id = e.targetTouches[i].identifier;
+				
+		if(fingerIds.indexOf(id)==-1){ //new finger
+			fingerIds.push(id);
+		}
+	}
+	
+	console.log(e, e.type, fingerIds.toString());
+}
+
+</script>
+</body>
+</html>

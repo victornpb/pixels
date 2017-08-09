@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PixelFix</title>
+<!-- Favicon
+<link rel="icon" type="image/png" href="favicon.png" />
+-->
+
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<!--
+<link rel="apple-touch-startup-image" href="startup_320x460.png" />
+<link rel="apple-touch-icon" href="touch-icon-iphone.png" />
+<link rel="apple-touch-icon" sizes="72x72" href="touch-icon-ipad.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="touch-icon-iphone-retina.png" />
+<link rel="apple-touch-icon" sizes="144x144" href="touch-icon-ipad-retina.png" />
+<meta name="format-detection" content="telephone=no">
+-->
+
+<!-- External Style Sheet
+<link rel="stylesheet" href="style.css" type="text/css" charset="utf-8">
+-->
+
+<style type="text/css">
+/* CSS GOES HERE */
+
+
+
+window, body {
+	margin: 0;
+}
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	background-color: #D6D6D6
+}
+#canvas {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	z-index: 1;
+}
+#flashingDiv {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	z-index: 1;
+}
+#fpsLabel {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	width: 4em;
+	height: 1em;
+	z-index: 1;
+	text-outline: 1px solid white;
+}
+</style>
+</head>
+<body>
+
+<div id="flashingDiv"></div>
+<div id="fpsLabel"></div>
+
+<script type="text/javascript">
+
+var flashingDiv;
+
+/* JAVASCRIPT GOES HERE */
+window.onload=function(){
+
+	f = fpsMeter(fpsLabel, 1);
+	
+	flashingDiv = document.getElementById('flashingDiv');
+	
+	//Start Loop Animation
+	animLoop(function(){ loop() });
+
+	// Hide the address bar!
+	setTimeout(function(){
+		window.scrollTo(0, 1);
+	  }, 0);
+};
+
+
+
+
+function loop(){
+
+	f();
+
+	flashingDiv.style.backgroundColor = randomColor();
+	
+
+}
+
+
+var randomColor = (function(){
+	
+	function getRandomInt(min, max) {
+    	return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
+	var color = [
+		'000',
+		'00F',
+		'0F0',
+		'F00',
+		'FFF'
+	];
+	
+	var l = color.length-1;
+	
+	return function(){
+		return '#'+color[getRandomInt(0,l)];
+	}
+})();
+
+
+/* FPS Meter - vitim.us */
+function fpsMeter(elm, refresh){
+    //var elm;             //element
+    //var refresh;         //refresh every x seconds
+    
+    var compRate = 1;      //compute frame rate every x frames (calculated on the go)
+    var frames = 0;        //number of frames since last timing
+    var last = 0; //start Timing 
+    
+    return function(){
+        if(++frames > compRate){
+            var now = Date.now();
+            var diff = now - last;
+            
+            if(diff>0){
+                var fps = (1000/(diff/frames));
+                last = now;
+                frames = 0;
+                
+                //exponential ramp the next update to match the current refresh rate
+                compRate = ((compRate*0.5)+((fps*refresh)*0.5))<<0;
+                
+                elm.innerHTML = fps.toFixed(2);
+                //fpsLast.innerHTML = Date.now();
+                //console.log(fps, compRate, new Date().toISOString());
+            }
+            else{
+                compRate*=2;                
+            }
+        }
+    }
+}
+
+
+
+// Cross browser, backward compatible solution
+(function( window, Date ) {
+	// feature testing
+	var raf = window.mozRequestAnimationFrame    ||
+	          window.webkitRequestAnimationFrame ||
+	          window.msRequestAnimationFrame     ||
+	          window.oRequestAnimationFrame;
+	 
+	window.animLoop = function(render, element) {
+	  var running, lastFrame = +new Date;
+	  function loop( now ) {
+	    if ( running !== false ) {
+	      raf ?
+	        raf( loop, element ) :
+	        // fallback to setTimeout
+	        setTimeout( loop, 16 );
+	      // Make sure to use a valid time, since:
+	      // - Chrome 10 doesn't return it at all
+	      // - setTimeout returns the actual timeout
+	      now = now && now > 1E4 ? now : +new Date;
+	      var deltaT = now - lastFrame;
+	      // do not render frame when deltaT is too high
+	      if ( deltaT < 160 ) {
+	        running = render( deltaT, now );
+	      }
+	      lastFrame = now;
+	    }
+	  }
+	  loop();
+	};
+})( window, Date );
+</script>
+</body>
+</html>

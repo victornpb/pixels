@@ -1,0 +1,278 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PixelFix</title>
+<!-- Favicon
+<link rel="icon" type="image/png" href="favicon.png" />
+-->
+
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<!--
+<link rel="apple-touch-startup-image" href="startup_320x460.png" />
+<link rel="apple-touch-icon" href="touch-icon-iphone.png" />
+<link rel="apple-touch-icon" sizes="72x72" href="touch-icon-ipad.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="touch-icon-iphone-retina.png" />
+<link rel="apple-touch-icon" sizes="144x144" href="touch-icon-ipad-retina.png" />
+<meta name="format-detection" content="telephone=no">
+-->
+
+<!-- External Style Sheet
+<link rel="stylesheet" href="style.css" type="text/css" charset="utf-8">
+-->
+
+<style type="text/css">
+/* CSS GOES HERE */
+
+
+
+window, body {
+	margin: 0;
+}
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	background-color: #D6D6D6
+}
+#canvas {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	z-index: 1;
+}
+#flickDiv {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	z-index: 1;
+}
+#fpsLabel {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	width: 4em;
+	height: 1em;
+	z-index: 1;
+	text-outline: 1px solid white;
+}
+</style>
+</head>
+<body>
+<div id="flickDiv"></div>
+<canvas id="canvas"></canvas>
+<div id="fpsLabel"></div>
+<script type="text/javascript">
+
+tx = 64;
+ty = 64;
+
+/* JAVASCRIPT GOES HERE */
+window.onload=function(){
+
+	f = fpsMeter(fpsLabel, 1);
+
+	
+	function resizeCanvas(){
+		var canvas = document.getElementById('canvas');
+		canvas.width = document.documentElement.clientWidth;
+		canvas.height = document.documentElement.clientHeight;
+		
+		//enable HiDef canvas for Retina Display
+		retinaCanvas(canvas);
+	}
+	resizeCanvas();
+
+	window.onresize = resizeCanvas;
+	window.onscroll = resizeCanvas;
+	setTimeout(resizeCanvas, 500);
+	
+
+	canvasContext = canvas.getContext("2d");
+	
+	//Start Loop Animation
+	animLoop(function(){ loop() });
+
+	/*
+	setInterval(function(){
+		loop();
+		loop();
+	},0);
+	*/
+
+	// Hide the address bar!
+	setTimeout(function(){
+		window.scrollTo(0, 1);
+	  }, 0);
+};
+
+function newCanvas(width, height){
+	var canvas = document.createElement("canvas");
+	canvas.width = width;
+	canvas.height = height;
+	return canvas;
+}
+
+function retinaCanvas(canvas){
+	if (window.devicePixelRatio) {
+		
+		var pixelRatio = window.devicePixelRatio;
+		var context = canvas.getContext('2d');
+		
+        var canvasWidth = canvas.getAttribute('width');
+        var canvasHeight = canvas.getAttribute('height');
+				
+        canvas.setAttribute('width', canvasWidth * pixelRatio);
+        canvas.setAttribute('height', canvasHeight * pixelRatio);
+		
+		canvas.style.width = canvasWidth+"px";
+        canvas.style.height = canvasHeight+"px";
+		
+        context.scale(pixelRatio, pixelRatio);
+		
+		setTimeout(function(){
+			canvas.setAttribute('width', canvasWidth * pixelRatio);
+        	canvas.setAttribute('height', canvasHeight * pixelRatio);
+		},10);              
+      }
+}
+function loop(){
+
+	f();
+
+	doNoise();
+	console.log(delay(100));
+
+}
+
+function delay(ms){
+	var x=0;
+	var t=Date.now();
+	while(Date.now()<t+ms){
+		x++;
+	}
+	return x;
+	return Date.now()-t;
+}
+
+function doNoise(){
+
+	//f(); //calculate fps
+
+	canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+	
+	var noise = noisePattern();
+	var pattern = canvasContext.createPattern(noise, "repeat");
+	canvasContext.rect(0, 0, canvas.width, canvas.height);
+	canvasContext.fillStyle = pattern;
+	canvasContext.fill();
+
+	noise = null;
+	pattern = null;
+}
+
+var noisePattern = (function(){
+
+	var canvas = document.createElement("canvas");
+	canvas.width = tx;
+	canvas.height = ty;
+	var context = canvas.getContext("2d");
+
+	var image = context.getImageData(0, 0, canvas.width, canvas.height);
+	var imageData = image.data; // here we detach the pixels array from DOM
+
+	return function (){
+		
+		var p;
+		var pixels = canvas.width*canvas.height;
+	    while(pixels--){
+			p = pixels*4;
+		    imageData[p+0] = Math.random() >= 0.5 ? 255 : 0; // Red
+		    imageData[p+1] = Math.random() >= 0.5 ? 255 : 0; // Green
+		    imageData[p+2] = Math.random() >= 0.5 ? 255 : 0; // Blue
+		    imageData[p+3] = 255; // Alpha
+		}
+	    
+		image.data = imageData;
+		context.putImageData(image, 0, 0);
+	    
+		return canvas;
+	}
+
+})();
+
+
+/* FPS Meter - vitim.us */
+function fpsMeter(elm, refresh){
+    //var elm;             //element
+    //var refresh;         //refresh every x seconds
+    
+    var compRate = 1;      //compute frame rate every x frames (calculated on the go)
+    var frames = 0;        //number of frames since last timing
+    var last = 0; //start Timing 
+    
+    return function(){
+        if(++frames > compRate){
+            var now = Date.now();
+            var diff = now - last;
+            
+            if(diff>0){
+                var fps = (1000/(diff/frames));
+                last = now;
+                frames = 0;
+                
+                //exponential ramp the next update to match the current refresh rate
+                compRate = ((compRate*0.5)+((fps*refresh)*0.5))<<0;
+                
+                elm.innerHTML = fps.toFixed(2);
+                //fpsLast.innerHTML = Date.now();
+                //console.log(fps, compRate, new Date().toISOString());
+            }
+            else{
+                compRate*=2;                
+            }
+        }
+    }
+}
+
+
+
+// Cross browser, backward compatible solution
+(function( window, Date ) {
+	// feature testing
+	var raf = window.mozRequestAnimationFrame    ||
+	          window.webkitRequestAnimationFrame ||
+	          window.msRequestAnimationFrame     ||
+	          window.oRequestAnimationFrame;
+	 
+	window.animLoop = function(render, element) {
+	  var running, lastFrame = +new Date;
+	  function loop( now ) {
+	    if ( running !== false ) {
+	      raf ?
+	        raf( loop, element ) :
+	        // fallback to setTimeout
+	        setTimeout( loop, 16 );
+	      // Make sure to use a valid time, since:
+	      // - Chrome 10 doesn't return it at all
+	      // - setTimeout returns the actual timeout
+	      now = now && now > 1E4 ? now : +new Date;
+	      var deltaT = now - lastFrame;
+	      // do not render frame when deltaT is too high
+	      if ( deltaT < 160 ) {
+	        running = render( deltaT, now );
+	      }
+	      lastFrame = now;
+	    }
+	  }
+	  loop();
+	};
+})( window, Date );
+</script>
+</body>
+</html>

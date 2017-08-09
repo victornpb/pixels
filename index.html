@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html manifest="http://vitim.us/playground/pixel/cache.manifest">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="user-scalable=yes, initial-scale=1.0, width=device-width">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<link rel="apple-touch-icon" href="touchicon.png" />
+
+<title>PixelTest</title>
+<style type="text/css">
+window,body{
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body{
+	font-family:Helvetica, Arial, sans-serif;
+	background-color: #333;	
+	color: #F3F3F3;
+	margin: 0;
+	padding: 5px;
+}
+
+h1,h2,h3,h4,h5,h6,h7,h8,h9{
+	text-shadow: 0 2px 3px rgba(0,0,0,0.5);
+}
+
+ul{
+	list-style: none;
+	padding: 0;
+}
+
+li{
+	background-color: #222;
+	margin: 1px;
+	padding: 0.5em;
+}
+
+li:hover{
+	background-color:#000;
+}
+
+li:active{
+	background-color:#444;
+}
+
+li a{
+	text-decoration: none;
+	color: inherit;
+	
+	/* text width link */
+	
+	display: block; 
+	width: auto; 
+	
+}
+
+li .item{
+	display: table;
+	width: auto;
+}
+
+li .item .icon{
+	display: table-cell;
+    vertical-align: middle;
+	
+	width: 38px;
+	height: 38px;
+	
+	background-color: black;
+	border-radius: 6px;
+	box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+}
+
+li .item span{
+	display: table-cell;
+    vertical-align: middle;
+	
+	text-shadow: 0 2px 3px rgba(0,0,0,0.5);
+	
+	padding-left: 1em;
+	padding-right: 1em;
+}
+
+footer div{
+	font-size: 9pt;
+	text-align:center;
+}
+footer a{
+	color: white;
+	text-decoration: none;
+}
+</style>
+
+</style>
+</head>
+<body>
+<header>
+    <h1>Tools for testing screen and touch and repairing dead pixel</h1>
+    <p>Add this page to your home screen!</p>
+</header>
+<content>
+    <h2>Multitouch Tests</h2>
+    <ul>
+    	<li><a href="crosshair/index.html"><image src="crosshair/apple-touch-icon.png" width="32" height="32"> Crosschair Test</a></li>
+    	<li><a href="canvas/index.html"><image src="canvas/apple-touch-icon.png" width="32" height="32"> Drawing Canvas</a></li>
+   	</ul>
+    <h2>Screen Test</h2>
+    <ul>
+    	<li><image src="colors/apple-touch-icon.png" width="32" height="32"><a href="colors/index.html">Colors Test</a></li>
+   	</ul>
+    <h2>Dead Pixel Stuck Pixel Fix</h2>
+	<p style="margin: 5px; background-color: rgba(255,255,0,0.2); font-size:10pt;">
+	"Warning: Some tools contains rapid flashing colors, and could be unsuitable to people with photosensitive epilepsy. Discretion is advised." 
+	</p>
+    <ul>
+    	<li><a href="deadPixelFix/pixelFix_noise_box.html">Dragable Noise Box</a></li>
+    	<li><a href="deadPixelFix/pixelFix_noise.html">Fullscreen Noise</a></li>
+    	<li><a href="deadPixelFix/pixelFix_bw.html">Flashing Black/white</a></li>
+    	<li><a href="deadPixelFix/pixelFix_rgb.html">Flashing red,green,blue</a></li>
+    	<li><a href="deadPixelFix/pixelFix_8colors.html">Flashing 8bit colors</a></li>
+   	</ul>
+</content>
+<footer>
+<div><a href="http://vitim.us">Vitim.us</a></div>
+</footer>
+
+<script type="text/javascript">
+/* JAVASCRIPT GOES HERE */
+window.onload=function(){
+	var a=document.getElementsByTagName("a");
+	for(var i=0;i<a.length;i++) {
+	    if(!a[i].onclick && a[i].getAttribute("target") != "_blank") {
+	        a[i].onclick=function() {
+	                window.location=this.getAttribute("href");
+	                return false; 
+	        }
+	    }
+	}
+};
+</script>
+  
+</body>
+</html>

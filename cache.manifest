@@ -1,0 +1,17 @@
+CACHE MANIFEST
+#rev 5:00pm 19-nov-2014 
+
+/playground/pixel/touchicon.png
+/playground/pixel/crosshair/index.html
+/playground/pixel/crosshair/apple-touch-icon.png
+/playground/pixel/canvas/index.html
+/playground/pixel/canvas/apple-touch-icon.png
+/playground/pixel/colors/index.html
+/playground/pixel/colors/apple-touch-icon.png
+/playground/pixel/deadPixelFix/pixelFix_noise_box.html
+/playground/pixel/deadPixelFix/pixelFix_noise.html
+/playground/pixel/deadPixelFix/pixelFix_bw.html
+/playground/pixel/deadPixelFix/pixelFix_rgb.html
+/playground/pixel/deadPixelFix/pixelFix_8colors.html
+/playground/pixel/deadPixelFix/drag_resize.js
+/playground/pixel/deadPixelFix/drag_resize.css
