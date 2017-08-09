@@ -5,24 +5,26 @@ Utilities to find and restore dead or stuck pixels and testing touchscreen and m
 
 > *"Warning: Some tools contains rapid flashing colors, and could be unsuitable to people with photosensitive epilepsy. Discretion is advised."*
 
-----
+--------------------------------------------------------------------------------
 
-#### Motivation
+### Motivation
 
 I developed those tools around 2013 for reapairing iOS devices, and I needed a quick way to check if the screen was working correctly, but I didn't want to enter my AppleID on other people devices, so a WebApp was the way to go.
 
-#### iOS
+### iOS
 
 It works quite well if you [Add to Home Screen](https://social2.etoro.com/wp-content/uploads/2015/10/ios-mobile-app-home-screen.gif) so it can go full-screen.
 
-#### Stuck Pixels
+### Stuck Pixels
 
-Specially on mobile devices or portables, it is required to disable the auto-lock or auto sleep, in order to keep the pixels changing.
+On portable devices, specially on phones and tablets, you will need to disable the auto-lock or auto sleep, and leave it plugged in and let it run overnight.
 
-#### Desktop
+You may change the brightness/backlight control to the minimum level to save energy, as it does not have any effect on the LCD itself.
 
-If nescessary put your browser in full-screen.
+### Desktop
 
-#### Suggestions or Questions
+Put your browser in full-screen to check the entire screen.
 
-File a [issue](https://github.com/victornpb/pixels/issues) on this repository 
+### Suggestions or Questions
+
+File a [issue](https://github.com/victornpb/pixels/issues) on this repository.
