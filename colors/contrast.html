@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>RGB Colors</title>
+<!-- Favicon
+<link rel="icon" type="image/png" href="favicon.png" />
+-->
+
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<!--
+<link rel="apple-touch-startup-image" href="startup_320x460.png" />
+<link rel="apple-touch-icon" href="touch-icon-iphone.png" />
+<link rel="apple-touch-icon" sizes="72x72" href="touch-icon-ipad.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="touch-icon-iphone-retina.png" />
+<link rel="apple-touch-icon" sizes="144x144" href="touch-icon-ipad-retina.png" />
+<meta name="format-detection" content="telephone=no">
+-->
+
+<!-- External Style Sheet
+<link rel="stylesheet" href="style.css" type="text/css" charset="utf-8">
+-->
+
+<style type="text/css">
+/* CSS GOES HERE */
+window, body {
+	margin: 0;
+  padding: 0;
+  height: 100%;
+}
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	background-color: rgb(0,0,0);
+}
+
+*{
+    box-sizing: border-box;
+}
+
+#contrast {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    align-content: stretch;
+    padding: 10px;
+    
+}
+
+#contrast > div {
+    display: flex;
+    flex-grow: 1;
+    margin-bottom: 10px;
+}
+#contrast > div:last-child {
+    margin-bottom: 0px;
+}
+
+#contrast > div > div {
+    flex-grow: 1;
+    text-align: center;
+}
+
+</style>
+</head>
+<body>
+
+<div id="contrast">
+</div>
+
+<script type="text/javascript">
+/* JAVASCRIPT GOES HERE */
+window.onload=function(){
+	
+	// Hide the address bar!
+	setTimeout(function(){
+		window.scrollTo(0, 1);
+	}, 0);
+	
+
+
+
+var inc = 8;
+
+var bar = document.createElement('div');
+for (var i = 0; i <= 256; i += inc) {
+    var c = document.createElement('div');
+    c.style.backgroundColor = rgbToHex(clamp(i), 0, 0);
+    if (i <= 256) c.style.color = '#fff';
+    //c.innerHTML = clamp(i, 0, 255);
+    bar.appendChild(c);
+}
+contrast.appendChild(bar);
+
+var bar = document.createElement('div');
+for (var i = 0; i <= 256; i += inc) {
+    var c = document.createElement('div');
+    c.style.backgroundColor = rgbToHex(clamp(i), clamp(i), 0);
+    if (i <= 256) c.style.color = '#fff';
+    //c.innerHTML = clamp(i, 0, 255);
+    bar.appendChild(c);
+}
+contrast.appendChild(bar);
+
+
+var bar = document.createElement('div');
+for (var i = 0; i <= 256; i += inc) {
+    var c = document.createElement('div');
+    c.style.backgroundColor = rgbToHex(0, clamp(i), 0);
+    if (i <= 256) c.style.color = '#fff';
+    //c.innerHTML = clamp(i, 0, 255);
+    bar.appendChild(c);
+}
+contrast.appendChild(bar);
+
+var bar = document.createElement('div');
+for (var i = 0; i <= 256; i += inc) {
+    var c = document.createElement('div');
+    c.style.backgroundColor = rgbToHex(0, clamp(i), clamp(i));
+    if (i <= 256) c.style.color = '#fff';
+    //c.innerHTML = clamp(i, 0, 255);
+    bar.appendChild(c);
+}
+contrast.appendChild(bar);
+
+var bar = document.createElement('div');
+for (var i = 0; i <= 256; i += inc) {
+    var c = document.createElement('div');
+    c.style.backgroundColor = rgbToHex(0, 0, clamp(i));
+    if (i <= 256) c.style.color = '#fff';
+    //c.innerHTML = clamp(i, 0, 255);
+    bar.appendChild(c);
+}
+contrast.appendChild(bar);
+
+
+
+
+
+
+var bar = document.createElement('div');
+for (var i = 0; i <= 256; i += inc) {
+    var c = document.createElement('div');
+    c.style.backgroundColor = rgbToHex(clamp(i), 0, clamp(i));
+    if (i <= 256) c.style.color = '#fff';
+    //c.innerHTML = clamp(i, 0, 255);
+    bar.appendChild(c);
+}
+contrast.appendChild(bar);
+
+var bar = document.createElement('div');
+for (var i = 0; i <= 256; i += inc) {
+    var c = document.createElement('div');
+    c.style.backgroundColor = rgbToHex(clamp(i), clamp(i), clamp(i));
+    if (i <= 256) c.style.color = '#fff';
+    //c.innerHTML = clamp(i, 0, 255);
+    bar.appendChild(c);
+}
+contrast.appendChild(bar);
+
+
+
+function rgbToHex(r, g, b) {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+function clamp(x, min, max) {
+    return x < 0 ? 0 : x > 255 ? 255 : x;
+}
+
+
+};
+
+</script>
+</body>
+</html>
