@@ -98,7 +98,7 @@ footer a{
 
 </style>
 </head>
-<body>
+<body onclick="openFullscreen(this)">
 <header>
     <h1>Tools for testing screen and touch and repairing dead pixel</h1>
     <p>Add this page to your home screen!</p>
@@ -144,6 +144,16 @@ window.onload=function(){
 	    }
 	}
 };
+	
+function openFullscreen(elem=document) {
+	if (elem.requestFullscreen) {
+		elem.requestFullscreen();
+	} else if (elem.webkitRequestFullscreen) { /* Safari */
+		elem.webkitRequestFullscreen();
+	} else if (elem.msRequestFullscreen) { /* IE11 */
+		elem.msRequestFullscreen();
+	}
+}
 </script>
   
 </body>
