@@ -50,7 +50,7 @@ body {
 
 </style>
 </head>
-<body>
+<body onclick="openFullscreen(this)">
 
 <div id="testArea">Tap to change color</div>
 
@@ -100,6 +100,16 @@ var getColor = (function(){
 		return '#'+colors[++i % colors.length];
 	}
 })();
+
+function openFullscreen(elem=document) {
+	if (elem.requestFullscreen) {
+		elem.requestFullscreen();
+	} else if (elem.webkitRequestFullscreen) { /* Safari */
+		elem.webkitRequestFullscreen();
+	} else if (elem.msRequestFullscreen) { /* IE11 */
+		elem.msRequestFullscreen();
+	}
+}
 
 </script>
 </body>
